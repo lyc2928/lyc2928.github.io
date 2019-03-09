@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>生活 on 一个大叔的日记本</title>
+    <link>https://lyc2928.github.io/categories/%E7%94%9F%E6%B4%BB/</link>
+    <description>Recent content in 生活 on 一个大叔的日记本</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 10 Mar 2019 02:49:01 +0800</lastBuildDate>
+    
+	<atom:link href="https://lyc2928.github.io/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>My First Post</title>
+      <link>https://lyc2928.github.io/post/my-first-post/</link>
+      <pubDate>Sun, 10 Mar 2019 02:49:01 +0800</pubDate>
+      
+      <guid>https://lyc2928.github.io/post/my-first-post/</guid>
+      <description>学习一下 测试 test</description>
+    </item>
+    
+  </channel>
+</rss>

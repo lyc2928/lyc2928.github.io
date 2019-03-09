@@ -42,4 +42,18 @@
     <priority>0</priority>
   </url>
   
+  <url>
+    <loc>https://lyc2928.github.io/tags/%E7%94%9F%E6%B4%BB/</loc>
+    <lastmod>2019-03-10T02:49:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
+    <lastmod>2019-03-10T02:49:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
 </urlset>
