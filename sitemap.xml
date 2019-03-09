@@ -3,7 +3,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyc2928.github.io/post/my-tow-post/</loc>
+    <lastmod>2019-03-10T03:35:44+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/post/my-first-post/</loc>
+    <lastmod>2019-03-10T02:49:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lyc2928.github.io/categories/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/post/</loc>
+    <lastmod>2019-03-10T03:35:44+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -16,6 +37,7 @@
   
   <url>
     <loc>https://lyc2928.github.io/</loc>
+    <lastmod>2019-03-10T03:35:44+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>

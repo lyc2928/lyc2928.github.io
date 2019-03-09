@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>一个大叔的日记本</title>
-    <link>https://lyc2928.github.io/</link>
-    <description>Recent content on 一个大叔的日记本</description>
+    <title>Posts on 一个大叔的日记本</title>
+    <link>https://lyc2928.github.io/post/</link>
+    <description>Recent content in Posts on 一个大叔的日记本</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 10 Mar 2019 03:35:44 +0800</lastBuildDate>
     
-	<atom:link href="https://lyc2928.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://lyc2928.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
