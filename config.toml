@@ -39,13 +39,18 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
   identifier = "archives"
   url = "/post/"
 [[menu.main]]
-  name = "标签"
+  name = "生活"
   weight = 30
+  identifier = "life"
+  url = "/categories/生活/"
+[[menu.main]]
+  name = "标签"
+  weight = 40
   identifier = "tags"
   url = "/tags/"
 [[menu.main]]
   name = "分类"
-  weight = 40
+  weight = 50
   identifier = "categories"
   url = "/categories/"
 
