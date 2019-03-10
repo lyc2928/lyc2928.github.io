@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Flannel网络不通排查 - 一个大叔的日记本</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="大叔" /><meta name="description" content="最近在做k8s实验 使用 kubeadmi 快速构建一个集群环境 1 2 master: 10.211.55.120 node: 10.211.55.121 安装网络插件,使用flannel 1 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 1 2 3 4 [root@k8s-master ~]# kubectl get pod -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://lyc2928.github.io/post/flannel%E7%BD%91%E7%BB%9C%E4%B8%8D%E9%80%9A%E6%8E%92%E6%9F%A5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Flannel网络不通排查" />
+<meta property="og:description" content="最近在做k8s实验 使用 kubeadmi 快速构建一个集群环境 1 2 master: 10.211.55.120 node: 10.211.55.121 安装网络插件,使用flannel 1 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 1 2 3 4 [root@k8s-master ~]# kubectl get pod -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lyc2928.github.io/post/flannel%E7%BD%91%E7%BB%9C%E4%B8%8D%E9%80%9A%E6%8E%92%E6%9F%A5/" />
+<meta property="article:published_time" content="2019-03-10T14:44:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-03-10T14:44:00&#43;08:00"/>
+
+<meta itemprop="name" content="Flannel网络不通排查">
+<meta itemprop="description" content="最近在做k8s实验 使用 kubeadmi 快速构建一个集群环境 1 2 master: 10.211.55.120 node: 10.211.55.121 安装网络插件,使用flannel 1 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 1 2 3 4 [root@k8s-master ~]# kubectl get pod -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS">
+
+
+<meta itemprop="datePublished" content="2019-03-10T14:44:00&#43;08:00" />
+<meta itemprop="dateModified" content="2019-03-10T14:44:00&#43;08:00" />
+<meta itemprop="wordCount" content="819">
+
+
+
+<meta itemprop="keywords" content="linux,flannel,k8s," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Flannel网络不通排查"/>
+<meta name="twitter:description" content="最近在做k8s实验 使用 kubeadmi 快速构建一个集群环境 1 2 master: 10.211.55.120 node: 10.211.55.121 安装网络插件,使用flannel 1 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 1 2 3 4 [root@k8s-master ~]# kubectl get pod -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大叔</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">文章</li>
+      </a><a href="/categories/%E7%94%9F%E6%B4%BB/">
+        <li class="mobile-menu-item">生活</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">大叔</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">文章</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Flannel网络不通排查</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-03-10 </span>
+        <div class="post-category">
+            <a href="/categories/linux/"> linux </a>
+            <a href="/categories/k8s/"> k8s </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#最近在做k8s实验">最近在做k8s实验</a></li>
+<li><a href="#安装网络插件-使用flannel">安装网络插件,使用flannel</a></li>
+<li><a href="#master-ping-不通node节点上pod">master ping 不通node节点上pod</a></li>
+<li><a href="#检查路由表">检查路由表</a></li>
+<li><a href="#node节点上-tcpdum-抓包">node节点上 tcpdum 抓包</a></li>
+<li><a href="#解决">解决</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<h3 id="最近在做k8s实验">最近在做k8s实验</h3>
+
+<blockquote>
+<p>使用 kubeadmi 快速构建一个集群环境</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">master: 10.211.55.120
+node:   10.211.55.121</pre></td></tr></table>
+</div>
+</div>
+<h3 id="安装网络插件-使用flannel">安装网络插件,使用flannel</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">kubectl apply -f  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@k8s-master ~<span class="o">]</span><span class="c1"># kubectl get pod -o wide</span>
+NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE         NOMINATED NODE   READINESS GATES
+nginx-54458cd494-ksw5s   <span class="m">1</span>/1     Running   <span class="m">1</span>          51m   <span class="m">10</span>.244.0.6   k8s-master   &lt;none&gt;           &lt;none&gt;
+nginx-54458cd494-xsw8f   <span class="m">1</span>/1     Running   <span class="m">1</span>          51m   <span class="m">10</span>.244.1.3   k8s-node     &lt;none&gt;           &lt;none&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="master-ping-不通node节点上pod">master ping 不通node节点上pod</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@k8s-master ~<span class="o">]</span><span class="c1"># ping 10.244.1.3</span>
+PING <span class="m">10</span>.244.1.3 <span class="o">(</span><span class="m">10</span>.244.1.3<span class="o">)</span> <span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span> bytes of data.
+^C
+--- <span class="m">10</span>.244.1.3 ping statistics ---
+<span class="m">11</span> packets transmitted, <span class="m">0</span> received, <span class="m">100</span>% packet loss, <span class="nb">time</span> 10004ms
+
+<span class="o">[</span>root@k8s-master ~<span class="o">]</span><span class="c1"># ping 10.244.0.6</span>
+PING <span class="m">10</span>.244.0.6 <span class="o">(</span><span class="m">10</span>.244.0.6<span class="o">)</span> <span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span> bytes of data.
+<span class="m">64</span> bytes from <span class="m">10</span>.244.0.6: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span><span class="m">0</span>.119 ms
+<span class="m">64</span> bytes from <span class="m">10</span>.244.0.6: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">2</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span><span class="m">0</span>.091 ms</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="检查路由表">检查路由表</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@k8s-master ~<span class="o">]</span><span class="c1"># ip r s</span>
+default via <span class="m">10</span>.211.55.1 dev eth0 proto static metric <span class="m">100</span>
+<span class="m">10</span>.211.55.0/24 dev eth0 proto kernel scope link src <span class="m">10</span>.211.55.120 metric <span class="m">100</span>
+<span class="m">10</span>.244.0.0/24 dev cni0 proto kernel scope link src <span class="m">10</span>.244.0.1
+<span class="m">10</span>.244.1.0/24 via <span class="m">10</span>.244.1.0 dev flannel.1 onlink
+<span class="m">172</span>.17.0.0/16 dev docker0 proto kernel scope link src <span class="m">172</span>.17.0.1
+<span class="o">[</span>root@k8s-master ~<span class="o">]</span><span class="c1"># route -n</span>
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+<span class="m">0</span>.0.0.0         <span class="m">10</span>.211.55.1     <span class="m">0</span>.0.0.0         UG    <span class="m">100</span>    <span class="m">0</span>        <span class="m">0</span> eth0
+<span class="m">10</span>.211.55.0     <span class="m">0</span>.0.0.0         <span class="m">255</span>.255.255.0   U     <span class="m">100</span>    <span class="m">0</span>        <span class="m">0</span> eth0
+<span class="m">10</span>.244.0.0      <span class="m">0</span>.0.0.0         <span class="m">255</span>.255.255.0   U     <span class="m">0</span>      <span class="m">0</span>        <span class="m">0</span> cni0
+<span class="m">10</span>.244.1.0      <span class="m">10</span>.244.1.0      <span class="m">255</span>.255.255.0   UG    <span class="m">0</span>      <span class="m">0</span>        <span class="m">0</span> flannel.1
+<span class="m">172</span>.17.0.0      <span class="m">0</span>.0.0.0         <span class="m">255</span>.255.0.0     U     <span class="m">0</span>      <span class="m">0</span>        <span class="m">0</span> docker0</code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>路由都存在, 是正常的</p>
+</blockquote>
+
+<h3 id="node节点上-tcpdum-抓包">node节点上 tcpdum 抓包</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@k8s-node ~<span class="o">]</span><span class="c1"># tcpdump icmp -vvv -nn</span>
+tcpdump: listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">262144</span> bytes
+<span class="m">01</span>:08:42.445216 IP <span class="o">(</span>tos 0xc0, ttl <span class="m">64</span>, id <span class="m">22760</span>, offset <span class="m">0</span>, flags <span class="o">[</span>none<span class="o">]</span>, proto ICMP <span class="o">(</span><span class="m">1</span><span class="o">)</span>, length <span class="m">162</span><span class="o">)</span>
+    <span class="m">10</span>.211.55.121 &gt; <span class="m">10</span>.211.55.120: ICMP host <span class="m">10</span>.211.55.121 unreachable - admin prohibited, length <span class="m">142</span>
+	IP <span class="o">(</span>tos 0x0, ttl <span class="m">64</span>, id <span class="m">4411</span>, offset <span class="m">0</span>, flags <span class="o">[</span>none<span class="o">]</span>, proto UDP <span class="o">(</span><span class="m">17</span><span class="o">)</span>, length <span class="m">134</span><span class="o">)</span>
+    <span class="m">10</span>.211.55.120.38499 &gt; <span class="m">10</span>.211.55.121.8472: <span class="o">[</span>no cksum<span class="o">]</span> OTV, flags <span class="o">[</span>I<span class="o">]</span> <span class="o">(</span>0x08<span class="o">)</span>, overlay <span class="m">0</span>, instance <span class="m">1</span>
+IP <span class="o">(</span>tos 0x0, ttl <span class="m">64</span>, id <span class="m">4825</span>, offset <span class="m">0</span>, flags <span class="o">[</span>DF<span class="o">]</span>, proto ICMP <span class="o">(</span><span class="m">1</span><span class="o">)</span>, length <span class="m">84</span><span class="o">)</span>
+    <span class="m">10</span>.244.0.0 &gt; <span class="m">10</span>.244.1.3: ICMP <span class="nb">echo</span> request, id <span class="m">17289</span>, seq <span class="m">1</span>, length <span class="m">64</span>
+<span class="m">01</span>:08:43.444979 IP <span class="o">(</span>tos 0xc0, ttl <span class="m">64</span>, id <span class="m">23715</span>, offset <span class="m">0</span>, flags <span class="o">[</span>none<span class="o">]</span>, proto ICMP <span class="o">(</span><span class="m">1</span><span class="o">)</span>, length <span class="m">162</span><span class="o">)</span>
+    <span class="m">10</span>.211.55.121 &gt; <span class="m">10</span>.211.55.120: ICMP host <span class="m">10</span>.211.55.121 unreachable - admin prohibited, length <span class="m">142</span>
+	IP <span class="o">(</span>tos 0x0, ttl <span class="m">64</span>, id <span class="m">4612</span>, offset <span class="m">0</span>, flags <span class="o">[</span>none<span class="o">]</span>, proto UDP <span class="o">(</span><span class="m">17</span><span class="o">)</span>, length <span class="m">134</span><span class="o">)</span>
+    <span class="m">10</span>.211.55.120.38499 &gt; <span class="m">10</span>.211.55.121.8472: <span class="o">[</span>no cksum<span class="o">]</span> OTV, flags <span class="o">[</span>I<span class="o">]</span> <span class="o">(</span>0x08<span class="o">)</span>, overlay <span class="m">0</span>, instance <span class="m">1</span>
+IP <span class="o">(</span>tos 0x0, ttl <span class="m">64</span>, id <span class="m">5013</span>, offset <span class="m">0</span>, flags <span class="o">[</span>DF<span class="o">]</span>, proto ICMP <span class="o">(</span><span class="m">1</span><span class="o">)</span>, length <span class="m">84</span><span class="o">)</span>
+    <span class="m">10</span>.244.0.0 &gt; <span class="m">10</span>.244.1.3: ICMP <span class="nb">echo</span> request, id <span class="m">17289</span>, seq <span class="m">2</span>, length <span class="m">64</span>
+<span class="m">01</span>:08:44.446015 IP <span class="o">(</span>tos 0xc0, ttl <span class="m">64</span>, id <span class="m">24297</span>, offset <span class="m">0</span>, flags <span class="o">[</span>none<span class="o">]</span>, proto ICMP <span class="o">(</span><span class="m">1</span><span class="o">)</span>, length <span class="m">162</span><span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>没有发现 reply 包响应</p>
+</blockquote>
+
+<h3 id="解决">解决</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">iptable 发现问题
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+num   pkts bytes target     prot opt in     out     source               destination
+1        0     0 KUBE-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes forwarding rules */
+2        0     0 DOCKER-USER  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+3        0     0 DOCKER-ISOLATION-STAGE-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+4        0     0 ACCEPT     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+5        0     0 DOCKER     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0
+6        0     0 ACCEPT     all  --  docker0 !docker0  0.0.0.0/0            0.0.0.0/0
+7        0     0 ACCEPT     all  --  docker0 docker0  0.0.0.0/0            0.0.0.0/0
+8        0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+9        0     0 ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0
+10       0     0 FORWARD_direct  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+11       0     0 FORWARD_IN_ZONES_SOURCE  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+12       0     0 FORWARD_IN_ZONES  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+13       0     0 FORWARD_OUT_ZONES_SOURCE  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+14       0     0 FORWARD_OUT_ZONES  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+15       0     0 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+16       0     0 ACCEPT     all  --  *      *       10.244.0.0/16        0.0.0.0/0
+17       0     0 ACCEPT     all  --  *      *       0.0.0.0/0            10.244.0.0/16</pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>REJECT(或DROP) 后还有规则, 这是有问题
+马上删除掉这规则, 同理也删除掉INPUT 链的规则</p>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">大叔</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-03-10
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/linux/">linux</a>
+          <a href="/tags/flannel/">flannel</a>
+          <a href="/tags/k8s/">k8s</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/%E6%88%BF%E7%AE%A1%E5%A4%A7%E5%8F%94/">
+            <span class="next-text nav-default">房管大叔</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    (function() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'xx-liyuchu-com';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="https://lyc2928.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">大叔</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

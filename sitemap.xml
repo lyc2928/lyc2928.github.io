@@ -3,6 +3,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyc2928.github.io/post/flannel%E7%BD%91%E7%BB%9C%E4%B8%8D%E9%80%9A%E6%8E%92%E6%9F%A5/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lyc2928.github.io/post/%E6%88%BF%E7%AE%A1%E5%A4%A7%E5%8F%94/</loc>
     <lastmod>2019-03-10T04:22:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -17,7 +24,7 @@
   
   <url>
     <loc>https://lyc2928.github.io/post/</loc>
-    <lastmod>2019-03-10T04:22:22+08:00</lastmod>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -29,8 +36,43 @@
   </url>
   
   <url>
+    <loc>https://lyc2928.github.io/tags/flannel/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/tags/k8s/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/categories/k8s/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/tags/linux/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/categories/linux/</loc>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://lyc2928.github.io/</loc>
-    <lastmod>2019-03-10T04:22:22+08:00</lastmod>
+    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on 一个大叔的日记本</title>
-    <link>https://lyc2928.github.io/post/</link>
-    <description>Recent content in Posts on 一个大叔的日记本</description>
+    <title>linux on 一个大叔的日记本</title>
+    <link>https://lyc2928.github.io/tags/linux/</link>
+    <description>Recent content in linux on 一个大叔的日记本</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 10 Mar 2019 14:44:00 +0800</lastBuildDate>
     
-	<atom:link href="https://lyc2928.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://lyc2928.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>https://lyc2928.github.io/post/flannel%E7%BD%91%E7%BB%9C%E4%B8%8D%E9%80%9A%E6%8E%92%E6%9F%A5/</guid>
       <description>最近在做k8s实验 使用 kubeadmi 快速构建一个集群环境 1 2 master: 10.211.55.120 node: 10.211.55.121 安装网络插件,使用flannel 1 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 1 2 3 4 [root@k8s-master ~]# kubectl get pod -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS</description>
-    </item>
-    
-    <item>
-      <title>房管大叔</title>
-      <link>https://lyc2928.github.io/post/%E6%88%BF%E7%AE%A1%E5%A4%A7%E5%8F%94/</link>
-      <pubDate>Sun, 10 Mar 2019 04:22:22 +0800</pubDate>
-      
-      <guid>https://lyc2928.github.io/post/%E6%88%BF%E7%AE%A1%E5%A4%A7%E5%8F%94/</guid>
-      <description>今天小区负责检查房子人员的大叔又来敲我门 见我在这两年了, 还是一个人 不要自己一个人过, 应该要找个女朋友一起过了 尴尬得我一脸</description>
     </item>
     
   </channel>
