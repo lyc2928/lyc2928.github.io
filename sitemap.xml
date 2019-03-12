@@ -3,6 +3,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyc2928.github.io/post/cpu%E4%BD%BF%E7%94%A8%E7%8E%87%E9%AB%98%E5%8D%B4%E6%89%BE%E4%B8%8D%E5%88%B0%E5%8D%A0%E7%94%A8%E9%AB%98cpu%E7%9A%84%E5%BA%94%E7%94%A8/</loc>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lyc2928.github.io/post/flannel%E7%BD%91%E7%BB%9C%E4%B8%8D%E9%80%9A%E6%8E%92%E6%9F%A5/</loc>
     <lastmod>2019-03-10T14:44:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -24,7 +31,7 @@
   
   <url>
     <loc>https://lyc2928.github.io/post/</loc>
-    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -58,21 +65,21 @@
   
   <url>
     <loc>https://lyc2928.github.io/tags/linux/</loc>
-    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://lyc2928.github.io/categories/linux/</loc>
-    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://lyc2928.github.io/</loc>
-    <lastmod>2019-03-10T14:44:00+08:00</lastmod>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -87,6 +94,13 @@
   <url>
     <loc>https://lyc2928.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
     <lastmod>2019-03-10T04:22:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyc2928.github.io/tags/%E7%9B%91%E6%8E%A7/</loc>
+    <lastmod>2019-03-13T03:18:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
